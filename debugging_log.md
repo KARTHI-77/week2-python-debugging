@@ -2,98 +2,95 @@
 
 ## Baseline Testing
 
-### Bug 1 - Amount Stored as String
+## Root Cause Investigation - Bug 1
 
-**Steps to reproduce:**
-1. Start the application.
-2. Add Food expense with amount 200.
-3. Add Transport expense with amount 100.
-4. Select Calculate Total.
+### Investigation
 
-**Expected behavior:**
-The application should calculate the total as ₹300.
+The traceback indicated that the application attempted to add
+an integer and a string:
 
-**Actual behavior:**
-The application terminated with a TypeError.
+`TypeError: unsupported operand type(s) for +: 'int' and 'str'`
 
-**Observed error:**
-TypeError: unsupported operand type(s) for +: 'int' and 'str'
+The value flow was traced from `add_expense()` to
+`calculate_total()`.
 
-**Traceback location:**
-`calculate_total()` - line 38.
+The amount is collected using:
 
-**Status:**
-Reproduced. Root cause investigation pending.
+```python
+amount = input("Enter amount: ")
 
----
+## Fix - Bug 1: Amount Stored as String
 
-### Bug 2 - Case-Sensitive Category Filtering
+### Original Problem
 
-**Steps to reproduce:**
-1. Add an expense with category `Food`.
-2. Select Filter by Category.
-3. Enter `food`.
+The application stored the amount returned by `input()` as a
+string. This caused a TypeError when the application attempted
+to add the amount to the numeric total.
 
-**Expected behavior:**
-The Food expense should be displayed.
+### Fix Applied
 
-**Actual behavior:**
-`No expenses found for this category.`
+The amount input was converted to a floating-point number using
+`float()` and protected with `try/except` to handle invalid
+numeric input.
 
-**Status:**
-Reproduced. Root cause investigation pending.
+The application also validates that the amount is greater than
+zero.
 
----
+### Corrected Logic
 
-### Bug 3 - Missing CSV File
+```python
+while True:
+    try:
+        amount = float(input("Enter amount: "))
 
-**Steps to reproduce:**
-1. Ensure `expenses.csv` does not exist.
-2. Start the application.
-3. Select Load Expenses.
+        if amount <= 0:
+            print("Amount must be greater than zero.")
+            continue
 
-**Expected behavior:**
-The application should handle the missing file gracefully.
+        break
 
-**Actual behavior:**
-The application terminated with `FileNotFoundError`.
+    except ValueError:
+        print("Please enter a valid numeric amount.")
 
-**Status:**
-Reproduced. Root cause investigation pending.
+### Root Cause Investigation - Bug 2
 
----
+The category filtering logic compares the stored category and
+the user's input using exact string equality:
 
-### Bug 4 - Invalid Amount Accepted
-
-**Steps to reproduce:**
-1. Select Add Expense.
-2. Enter category `Food`.
-3. Enter amount `abc`.
-4. Enter a description.
-
-**Expected behavior:**
-The application should reject non-numeric expense amounts.
-
-**Actual behavior:**
-The application accepted `abc` and displayed `Expense added successfully.`
-
-**Status:**
-Reproduced. Root cause investigation pending.
+```python
+if expense["category"] == category:
 
 ---
 
-### Bug 5 - Duplicate Records During Loading
+### Root Cause Investigation - Bug 3
 
-**Steps to reproduce:**
-1. Save expenses to `expenses.csv`.
-2. Select Load Expenses.
-3. Select Load Expenses again.
+The application failed when the `expenses.csv` file was not
+present in the working directory.
 
-**Expected behavior:**
-Loading the saved file should not create duplicate records.
+The relevant code is:
 
-**Actual behavior:**
-Records are appended to the existing list each time the file is loaded.
+```python
+with open("expenses.csv", "r") as file:
+    reader = csv.DictReader(file)
 
-**Status:**
-Reproduced. Root cause investigation pending.
+---
+
+### Root Cause Investigation - Bug 4
+
+The application accepts the expense amount using:
+
+```python
+amount = input("Enter amount: ")
+
+---
+
+### Root Cause Investigation - Bug 5
+
+The application was tested by adding two expenses, saving them
+to `expenses.csv`, and then loading the file multiple times.
+
+Initial state:
+
+```text
+1. Food - ₹200 - Lunch
+2. Transport - ₹100 - bus

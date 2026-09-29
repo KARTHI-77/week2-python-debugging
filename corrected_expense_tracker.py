@@ -61,7 +61,7 @@ def filter_by_category():
     found = False
 
     for expense in expenses:
-        if expense["category"] == category:
+        if expense["category"].strip().lower() == category.strip().lower():
             print(
                 f"{expense['category']} - "
                 f"₹{expense['amount']} - {expense['description']}"

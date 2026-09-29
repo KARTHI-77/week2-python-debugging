@@ -60,6 +60,20 @@ the user's input using exact string equality:
 ```python
 if expense["category"] == category:
 
+### Fix - Bug 2: Case-Sensitive Category Filtering
+
+#### Original Problem
+
+The category filtering logic used exact string comparison:
+
+```python
+if expense["category"] == category:
+
+### Corrected Logic
+
+```python
+if expense["category"].strip().lower() == category.strip().lower():
+
 ---
 
 ### Root Cause Investigation - Bug 3

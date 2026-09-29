@@ -87,6 +87,17 @@ The relevant code is:
 with open("expenses.csv", "r") as file:
     reader = csv.DictReader(file)
 
+### Fix - Bug 3: Missing CSV File Handling
+
+#### Original Problem
+The `load_expenses()` function attempted to open `expenses.csv`
+without checking whether the file existed.
+
+This caused the application to terminate with:
+
+```text
+FileNotFoundError: [Errno 2] No such file or directory: 'expenses.csv'
+
 ---
 
 ### Root Cause Investigation - Bug 4

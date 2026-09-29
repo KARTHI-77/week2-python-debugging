@@ -89,13 +89,16 @@ def save_expenses():
 
 
 def load_expenses():
-    with open("expenses.csv", "r") as file:
-        reader = csv.DictReader(file)
+    try:
+        with open("expenses.csv", "r") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                expenses.append(row)
 
-        for row in reader:
-            expenses.append(row)
+        print("Expenses loaded successfully.")
 
-    print("Expenses loaded successfully.")
+    except FileNotFoundError:
+        print("No saved expenses file found.")
 
 
 def main():

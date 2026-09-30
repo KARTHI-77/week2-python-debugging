@@ -92,6 +92,9 @@ def load_expenses():
     try:
         with open("expenses.csv", "r") as file:
             reader = csv.DictReader(file)
+
+            expenses.clear()
+
             for row in reader:
                 expenses.append(row)
 

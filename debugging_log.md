@@ -148,3 +148,20 @@ Initial state:
 ```text
 1. Food - ₹200 - Lunch
 2. Transport - ₹100 - bus
+
+### Fix - Bug 5: Duplicate Records When Loading
+
+#### Original Problem
+Loading the CSV file multiple times caused duplicate expense records
+because the existing records were not cleared before loading.
+
+For example, after adding two expenses, loading the CSV once resulted
+in four records instead of two.
+
+#### Root Cause
+The original implementation directly appended every CSV record to the
+existing `expenses` list:
+
+```python
+for row in reader:
+    expenses.append(row)

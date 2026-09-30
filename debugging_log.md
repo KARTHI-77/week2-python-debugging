@@ -107,6 +107,35 @@ The application accepts the expense amount using:
 ```python
 amount = input("Enter amount: ")
 
+### Fix - Bug 4: Invalid Amount Validation
+
+#### Original Problem
+The original application accepted invalid expense amounts such as
+non-numeric text, zero, and negative values.
+
+For example, entering `abc` was accepted as an expense amount because
+the value from `input()` was stored directly without validation.
+
+#### Root Cause
+The original code did not convert the amount to a numeric type or
+validate whether the amount was greater than zero.
+
+#### Fix Applied
+The amount is now converted to `float` and validated using a loop:
+
+```python
+while True:
+    try:
+        amount = float(input("Enter amount: "))
+
+        if amount <= 0:
+            print("Amount must be greater than zero.")
+            continue
+
+        break
+
+    except ValueError:
+        print("Please enter a valid numeric amount.")
 ---
 
 ### Root Cause Investigation - Bug 5
